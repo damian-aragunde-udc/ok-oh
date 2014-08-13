@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ public class AboutActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
 		
+		setIcon(R.drawable.ic_launcher);
 		setCopyright(R.raw.copyright, R.style.TextAppearance_AppCompat_Base_Widget_PopupMenu_Large);
 		setCopyright(R.raw.license, 0);
 	}
@@ -59,6 +61,15 @@ public class AboutActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	private void setIcon(int resource) {
+		LinearLayout layout= (LinearLayout) findViewById(R.id.aboutLayout);
+		
+		ImageView icon= new ImageView(this);
+		icon.setImageResource(resource);
+		
+		layout.addView(icon);
+	}
+	
 	private void setCopyright(int resource, int style) {
 		LinearLayout layout= (LinearLayout) findViewById(R.id.aboutLayout);
 		String line= "";
@@ -72,10 +83,10 @@ public class AboutActivity extends Activity {
 				TextView text= new TextView(this);
 				text.setTextAppearance(this, style);
 				
-				line= bReader.readLine();
 				text.setText(line);
-				
 				layout.addView(text);
+				
+				line= bReader.readLine();
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
