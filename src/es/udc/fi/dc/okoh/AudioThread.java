@@ -22,11 +22,9 @@ import android.os.AsyncTask;
 
 public class AudioThread extends AsyncTask<AudioSystem, Void, Void> {
 	@Override
-	protected Void doInBackground(AudioSystem... audio) {
+	protected Void doInBackground(AudioSystem... sys) {
 		while(!isCancelled()) {
-			audio[0].grabar();
-			audio[0].getFiltro().filtrar();
-			audio[0].reproducir();
+			sys[0].reproducir(sys[0].getFiltro().filtrar(sys[0].grabar()));
 		}
 		return null;
 	}

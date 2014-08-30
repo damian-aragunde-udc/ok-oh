@@ -20,33 +20,14 @@ package es.udc.fi.dc.okoh;
 
 
 public class Filtro {
-	private AudioSystem audio;
-	private byte[] bufferIn;
-	private byte[] bufferOut;
 	private int tamanoBuffer;
 	
-	public Filtro(AudioSystem audio) {
-		this.audio= audio;
-		this.tamanoBuffer= audio.getTamanoBuffer();
-		this.bufferIn= new byte[tamanoBuffer];
-		this.bufferOut= new byte[tamanoBuffer];
+	public Filtro(int tamanoBuffer) {
+		this.tamanoBuffer= tamanoBuffer;
 	}
 	
-	public void filtrar() {
-		leer();
-		procesar();
-		escribir();
-	}
-	
-	private void leer() {
-		bufferIn= audio.getBufferGrabacion();
-	}
-	
-	private void escribir() {
-		audio.setBufferReproduccion(bufferOut);
-	}
-	
-	private void procesar() {
+	public byte[] filtrar(byte[] bufferIn) {
+		byte[] bufferOut= new byte[tamanoBuffer];
 //		bufferOut= bufferIn;
 		
 		int i= 0;
@@ -58,5 +39,7 @@ public class Filtro {
 			bufferOut[i]= pulso;
 			i++;
 		}
+		
+		return bufferOut;
 	}
 }

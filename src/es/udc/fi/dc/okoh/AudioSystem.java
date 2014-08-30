@@ -36,8 +36,6 @@ public class AudioSystem extends Service {
 	private static int origenAudio= AudioSource.VOICE_RECOGNITION;
 	private static int tipoStream= AudioManager.STREAM_MUSIC;
 	
-	private byte[] bufferGrabacion;
-	private byte[] bufferReproduccion;
 	private Filtro filtro;
 	private AudioRecord grabador;
 	private AsyncTask<AudioSystem, Void, Void> hilo;
@@ -54,9 +52,7 @@ public class AudioSystem extends Service {
 			Log.e("OK-OH!.AudioSystem", "Imposible encontrar una configuracion de grabacion/reproduccion valida para el dispositivo");
 			stopSelf();
 		}
-		this.bufferGrabacion= new byte[tamanoBuffer];
-		this.bufferReproduccion= new byte[tamanoBuffer];
-		this.filtro= new Filtro(this);
+		this.filtro= new Filtro(tamanoBuffer);
 		this.hilo= new AudioThread();
 	}
 
@@ -132,38 +128,20 @@ public class AudioSystem extends Service {
 	}
 	
 	/**
-	 * @return the bufferGrabacion
-	 */
-	public byte[] getBufferGrabacion() {
-		return bufferGrabacion;
-	}
-
-	/**
 	 * @return the filtro
 	 */
 	public Filtro getFiltro() {
 		return filtro;
 	}
 
-	/**
-	 * @return the tamanoBuffer
-	 */
-	public int getTamanoBuffer() {
-		return tamanoBuffer;
-	}
-
-	/**
-	 * @param bufferReproduccion the bufferReproduccion to set
-	 */
-	public void setBufferReproduccion(byte[] bufferReproduccion) {
-		this.bufferReproduccion = bufferReproduccion;
-	}
-
-	public void grabar() {
+	public byte[] grabar() {
+		byte[] bufferGrabacion= new byte[tamanoBuffer];
+		
 		grabador.read(bufferGrabacion, 0, bufferGrabacion.length);
+		return bufferGrabacion;
 	}
 
-	public void reproducir() {
-		reproductor.write(bufferReproduccion, 0, bufferGrabacion.length);
+	public void reproducir(byte[] bufferReproduccion) {
+		reproductor.write(bufferReproduccion, 0, bufferReproduccion.length);
 	}
 }
