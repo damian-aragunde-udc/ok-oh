@@ -36,6 +36,7 @@ public class AudioSystem extends Service {
 	private static int origenAudio= AudioSource.VOICE_RECOGNITION;
 	private static int tipoStream= AudioManager.STREAM_MUSIC;
 	
+	private int bits;
 	private Filtro filtro;
 	private AudioRecord grabador;
 	private AsyncTask<AudioSystem, Void, Void> hilo;
@@ -52,7 +53,7 @@ public class AudioSystem extends Service {
 			Log.e("OK-OH!.AudioSystem", "Imposible encontrar una configuracion de grabacion/reproduccion valida para el dispositivo");
 			stopSelf();
 		}
-		this.filtro= new Filtro(tamanoBuffer);
+		this.filtro= new Filtro(tamanoBuffer, bits);
 		this.hilo= new AudioThread();
 	}
 
@@ -110,9 +111,15 @@ public class AudioSystem extends Service {
                         	AudioTrack reproductor= new AudioTrack(tipoStream, muestreo, canalReproduccion, formato, tamano, modoReproduccion);
                             if (reproductor.getState() == AudioTrack.STATE_INITIALIZED) {
                             	// Momento en el que damos con la configuracion adecuada
-                            	this.tamanoBuffer= tamano;
+                            	if (formato == AudioFormat.ENCODING_PCM_16BIT) {
+                            		this.bits= 16;
+                            	}
+                            	else {
+                                	this.bits= 8;
+                            	}
                             	this.grabador= grabador;
                             	this.reproductor= reproductor;
+                            	this.tamanoBuffer= tamano;
                                 return true;
                             }
                             else {

@@ -18,26 +18,50 @@
 
 package es.udc.fi.dc.okoh;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 
 public class Filtro {
+	private int bits;
 	private int tamanoBuffer;
 	
-	public Filtro(int tamanoBuffer) {
+	public Filtro(int tamanoBuffer, int bits) {
 		this.tamanoBuffer= tamanoBuffer;
+		this.bits= bits;
 	}
 	
 	public byte[] filtrar(byte[] bufferIn) {
 		byte[] bufferOut= new byte[tamanoBuffer];
-//		bufferOut= bufferIn;
 		
-		int i= 0;
-		for (byte pulso: bufferIn) {
-			// Aumento de volumen
-			if (pulso < -4 && pulso > 4 && pulso > -32 && pulso < 32)
-				pulso *= 4;
-			
-			bufferOut[i]= pulso;
-			i++;
+		for (int i= 0; i < bufferIn.length; i++) {
+			if (bits == 16) {
+				// Conversion a short
+				ByteBuffer bufferAux= ByteBuffer.allocate(2);
+				bufferAux.order(ByteOrder.LITTLE_ENDIAN);
+				bufferAux.put(bufferIn[i]);
+				bufferAux.put(bufferIn[i+1]);
+				short pulso= bufferAux.getShort(0);
+				
+				// Aumento de volumen
+				if (pulso < -4 && pulso > 4 && pulso > -8192 && pulso < 8192) {
+					pulso *= 4;
+				}
+				
+				// Conversion a byte
+				bufferOut[i]= (byte) (pulso & 0xff);
+				bufferOut[i+1]= (byte) ((pulso >> 8) & 0xff);
+				
+				i++;
+			}
+			else {
+				byte pulso= bufferIn[i];
+				
+				// Aumento de volumen
+				if (pulso < -4 && pulso > 4 && pulso > -32 && pulso < 32) {
+					bufferOut[i]= (byte) (pulso*4);
+				}
+			}
 		}
 		
 		return bufferOut;
